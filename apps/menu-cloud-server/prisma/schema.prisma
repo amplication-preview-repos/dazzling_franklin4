@@ -1,0 +1,78 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Menu {
+  createdAt    DateTime    @default(now())
+  description  String?
+  id           String      @id @default(cuid())
+  menuItems    MenuItem[]
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+  restaurantId String?
+  title        String?
+  updatedAt    DateTime    @updatedAt
+}
+
+model Restaurant {
+  address   String?
+  createdAt DateTime @default(now())
+  email     String?
+  id        String   @id @default(cuid())
+  menus     Menu[]
+  name      String?
+  phone     String?
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  createdAt DateTime   @default(now())
+  id        String     @id @default(cuid())
+  menuItems MenuItem[]
+  name      String?
+  updatedAt DateTime   @updatedAt
+}
+
+model MenuItem {
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+  createdAt   DateTime  @default(now())
+  description String?
+  id          String    @id @default(cuid())
+  menu        Menu?     @relation(fields: [menuId], references: [id])
+  menuId      String?
+  name        String?
+  price       Float?
+  updatedAt   DateTime  @updatedAt
+}
+
+model Customer {
+  birthday    DateTime?
+  createdAt   DateTime  @default(now())
+  email       String?
+  firstName   String?
+  id          String    @id @default(cuid())
+  lastName    String?
+  orders      Order[]
+  phoneNumber String?
+  updatedAt   DateTime  @updatedAt
+}
+
+model Order {
+  createdAt   DateTime         @default(now())
+  customer    Customer?        @relation(fields: [customerId], references: [id])
+  customerId  String?
+  id          String           @id @default(cuid())
+  orderDate   DateTime?
+  status      EnumOrderStatus?
+  totalAmount Float?
+  updatedAt   DateTime         @updatedAt
+}
+
+enum EnumOrderStatus {
+  Option1
+}
